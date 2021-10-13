@@ -35,6 +35,7 @@ data_norm = minmax(data)
 plt.figure()
 powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(data)
 plt.title("Clear Signal")
+#%%
 plt.figure()
 powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(data_n[:,0])
 plt.title("Noise Signal")
@@ -77,7 +78,7 @@ print(snr)
 reduced_noise = nr.reduce_noise(y=noisy_audio, sr=rate)
 
 plt.figure()
-plt.plot(reduced_noise)
+powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(reduced_noise)
 
 snr = signaltonoise(reduced_noise)
 print(snr)
