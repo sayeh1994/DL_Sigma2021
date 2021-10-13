@@ -12,6 +12,7 @@ import numpy as np
 #from librosa.core import stft, istft
 import stft
 from scipy import fft
+from scipy import signal as sig
 import soundfile as sf
 #%%
 def minmax(s):
@@ -83,15 +84,22 @@ powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(reduced_noise)
 snr = signaltonoise(reduced_noise)
 print(snr)
 #%%
-wavfile.write("Noise.wav", rate, noisy_audio)
-wavfile.write("DeNoise.wav", rate, reduced_noise)
+path_result = r"E:\Subjects\Master 02\Semester 1\Deep Learning\Code Project\Result\\"
+wavfile.write(path_result+"Noise.wav", rate, noisy_audio)
+wavfile.write(path_result+"DeNoise.wav", rate, reduced_noise)
 #%%
-spectrum = stft.stft(noisy_audio,128)
+spectrum = stft.stft(data,128)
 back_y = stft.istft(spectrum,128)
-spectrum2 = fft(noisy_audio)
-plt.figure()
-plt.plot(abs(noisy_audio),color="yellow",marker=".")
-#%%
-plt.figure()
-powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(noisy_audio)
 
+plt.figure()
+plt.plot(abs(noisy_audio),marker=".")
+
+#%%
+spectrum2 = fft(data)
+spectrum3 = sig.stft(data)
+plt.figure()
+powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(abs(spectrum3[2]))
+#%%
+f, t, Zxx = sig.stft(data, rate, nperseg=1000)
+#plt.pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=amp, shading='gouraud')
+plt.pcolormesh(t, f, np.abs(Zxx), vmin = np.min(np.abs(Zxx)), vmax = np.max(np.abs(Zxx)), shading='green')
