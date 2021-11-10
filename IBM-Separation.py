@@ -47,6 +47,7 @@ CleanAduio="247906.mp3"
 NoiseAudio = "Washing Machine Spining Fast - QuickSounds.com.mp3"
 samples1, sample_rate1 = librosa.load(path+CleanAduio)
 samples2, sample_rate2  = librosa.load(path+NoiseAudio)
+#samples2 = np.random.randint(len(samples2)-len(samples1)+1)
 #%%
 samples2 = samples2[:len(samples1)]
 #%% Join 2 wav files together
@@ -68,7 +69,7 @@ samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant
 mixed_series = samples1 + samples2
 
 #Pad 3 wav files to whole number of seconds
-extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
+extrapadding = int((ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series))
 mixed_series = np.pad(mixed_series, (0,extrapadding), 'constant', constant_values=(0))
 samples1 = np.pad(samples1, (0,extrapadding), 'constant', constant_values=(0))
 samples2 = np.pad(samples2, (0,extrapadding), 'constant', constant_values=(0))
@@ -109,9 +110,9 @@ plt.close(fig)
 nperseg = sample_rate1 / 50
 
 #Get stft of 3 wav files
-f1, t1, Zsamples1 = signal.stft(samples1, fs=sample_rate1, nperseg=nperseg)
-f2, t2, Zsamples2 = signal.stft(samples2, fs=sample_rate1, nperseg=nperseg)
-fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
+f1, t1, Zsamples1 = sig.stft(samples1, fs=sample_rate1, nperseg=nperseg)
+f2, t2, Zsamples2 = sig.stft(samples2, fs=sample_rate1, nperseg=nperseg)
+fmixed, tmixed, Zmixed_series = sig.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
 
 
 #%% Plot magnitude of 3 wav files
@@ -138,8 +139,8 @@ plt.close(fig)
 # Create IBM for signal 1 by calculating SNR of signal 1 vs mixture signal
 
 #Choose sample to create mask for
-Zsample = Zsamples2
-sample = samples2
+Zsample = Zsamples1
+sample = samples1
 
 #Calculate signal to noise ratio of clean signal versus combined signal
 snr = np.divide(np.real(np.abs(Zsample)), np.real(np.abs(Zmixed_series)))
@@ -169,7 +170,7 @@ plt.close(fig)
 
 #%% convert back to a time series via inverse STFT
 
-_, samplesrec = signal.istft(Zsamplesmaked, sample_rate1)
+_, samplesrec = sig.istft(Zsamplesmaked, sample_rate1)
 
 
 #%% Compare the original wav with recovered wav
@@ -189,6 +190,7 @@ dsppp = np.asarray(samplesrec, dtype=np.int16)
 path_result = r"E:\Subjects\Master 02\Semester 1\Deep Learning\Code Project\Result\\"
 #Save combined series to wav file
 wavfile.write(path_result + 'recovered.wav', sample_rate1, samplesrec)
+wavfile.write(path_result + 'Clean and noise.wav', sample_rate1, mixed_series)
 
 #play sound
 #winsound.PlaySound(path_result + 'recovered.wav', winsound.SND_FILENAME|winsound.SND_ASYNC)
