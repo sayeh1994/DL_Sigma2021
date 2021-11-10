@@ -44,7 +44,7 @@ from sklearn.metrics import mean_squared_error
 #%% Load Data
 path = r"E:\Subjects\Master 02\Semester 1\Deep Learning\Code Project\Audio Path\\"
 CleanAduio="247906.mp3"
-NoiseAudio = "Washing Machine Spining Fast - QuickSounds.com.mp3"
+NoiseAudio = "babble.wav"
 samples1, sample_rate1 = librosa.load(path+CleanAduio)
 samples2, sample_rate2  = librosa.load(path+NoiseAudio)
 #samples2 = np.random.randint(len(samples2)-len(samples1)+1)
@@ -65,8 +65,12 @@ maxlength = max(len(samples1),len(samples1))
 samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
 samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
 
+speechPower = sum(samples1**2)
+noisePower = sum(samples2**2)
+alpha = np.sqrt(speechPower/noisePower)
+
 #combine series together
-mixed_series = samples1 + samples2
+mixed_series = samples1 + alpha * samples2
 
 #Pad 3 wav files to whole number of seconds
 extrapadding = int((ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series))
