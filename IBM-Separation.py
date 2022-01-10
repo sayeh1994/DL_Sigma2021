@@ -59,12 +59,12 @@ samples2 = samples2[:len(samples1)]
 #sample_rate2, samples2 = wavfile.read(file2)
 
 #Find length of longest signal
-maxlength = max(len(samples1),len(samples1))
+maxlength = max(len(samples1),len(samples2))
 
 #Pad each signal to the length of the longest signal
 samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
 samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
-
+#%%
 speechPower = sum(samples1**2)
 noisePower = sum(samples2**2)
 alpha = np.sqrt(speechPower/noisePower)

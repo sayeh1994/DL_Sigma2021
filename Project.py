@@ -14,6 +14,7 @@ import stft
 from scipy import fft
 from scipy import signal as sig
 import soundfile as sf
+import librosa
 #%%
 def minmax(s):
     s = s/max(s)
@@ -25,8 +26,20 @@ def signaltonoise(a, axis=0, ddof=0):
     return np.where(sd == 0, 0, m/sd)
 #%% load data
 path = r"E:\Subjects\Master 02\Semester 1\Deep Learning\Code Project\Audio Path"
-data, rate = sf.read(path+"\original.flac")
-rate_n, data_n = wavfile.read(path+"\long_descending_noise.wav")
+data, rate = librosa.load(path+"\\247906.mp3")
+data_n, rate_n,  = librosa.load(path+"\\Washing Machine Spining Fast - QuickSounds.com.mp3")
+#%%
+f, t, Zxx = sig.stft(data, rate, nperseg=1000)
+plt.pcolormesh(t, f, np.abs(Zxx), vmin = np.min(np.abs(Zxx)), vmax = np.max(np.abs(Zxx)), shading='green')
+plt.title("Clean Audio")
+f, t, Zxx = sig.stft(data_n[:,0], rate, nperseg=1000)
+plt.pcolormesh(t, f, np.abs(Zxx), vmin = np.min(np.abs(Zxx)), vmax = np.max(np.abs(Zxx)), shading='green')
+plt.title("Noise")
+#%%
+plt.figure()
+plt.plot(data),plt.title("Clean")
+plt.figure()
+plt.plot(np.abs(fft(data_n[:,0]))),plt.title("Noise")
 #%%
 N = len(data)
 N_n = len(data_n[:,0])
